@@ -9,7 +9,7 @@ import org.apache.http.impl.client.*;
 import org.apache.http.message.*;
 import org.json.*;
 
-public class ApplianceClient {
+public class ApplianceTestClient {
 	public static final String SET_STATE_URL = "http://localhost:8081/appliance/v1/setstate";
 	public static final String GET_STATE_URL = "http://localhost:8081/appliance/v1/getstate";
 
