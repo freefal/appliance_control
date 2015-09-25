@@ -10,71 +10,48 @@ import org.apache.http.message.*;
 import org.json.*;
 
 public class ApplianceClient {
-	public static final String CLIENT_ID = "1";
-	public static final String GET_STATUS_URL = "http://localhost:8081/api/v1/appliances/getState?client="+CLIENT_ID;
-	public static final int SLEEP_TIME = 30000;
-	public HashMap <String, GpioController> nameToPinMap;
-	public HashMap <String, PinState> nameToStateMap;
+	public static final String SET_STATE_URL = "http://localhost:8081/appliance/v1/setstate";
+	public static final String GET_STATE_URL = "http://localhost:8081/appliance/v1/getstate";
 
 	public static void main(String[] args) {
 		try {
-			
-			/*			
-							HttpClient client = HttpClientBuilder.create().build();
-							HttpPost post = new HttpGet(url);
+			if (args.length != 2 && args.length !=0) {
+				System.err.println("Incorrect usage. Must include no arguments or two argument specifying the appliance name (String) and state (Integer)");
+				System.exit(1);
+			}
 
-							List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-							urlParameters.add(new BasicNameValuePair("clientid", CLIENT_ID));
-							urlParameters.add(new BasicNameValuePair("fen", "2r4k/p2p1ppp/8/8/2B5/8/P1q1RPPP/4R1K1 w - - 0 21"));
+			if (args.length == 2) {
+				String app = args[0];
+				String state = args[1];
+				HttpClient client = HttpClientBuilder.create().build();
+				HttpPost post = new HttpPost(SET_STATE_URL);
 
-							post.setEntity(new UrlEncodedFormEntity(urlParameters));
+				List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+				urlParameters.add(new BasicNameValuePair("app", app));
+				urlParameters.add(new BasicNameValuePair("state", state));
 
-							HttpResponse response = client.execute(get);
+				post.setEntity(new UrlEncodedFormEntity(urlParameters));
 
-							BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+				HttpResponse response = client.execute(post);
+			}
 
-							StringBuffer result = new StringBuffer();
-							String line = "";
-							while ((line = rd.readLine()) != null) {
-							result.append(line);
-							}
+			HttpClient client = HttpClientBuilder.create().build();
+			HttpGet get = new HttpGet(GET_STATE_URL);
 
-							System.out.println(result.toString());
+			HttpResponse response = client.execute(get);
+			BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 
-							Thread.sleep(5000);
+			StringBuffer result = new StringBuffer();
+			String line = "";
+			while ((line = reader.readLine()) != null) {
+				result.append(line);
+			}
 
-							url = "http://localhost:8080/stockfish/geteval?clientid=" + CLIENT_ID;
-							*/
+			System.out.println(result.toString());
+			JSONTokener jtok = new JSONTokener(result.toString());
 
 		} catch (Exception e) { e.printStackTrace(); }
 
-
-	}
-
-	private class GetStatusThread extends Thread {
-
-		public void run () {
-			while (true) { 
-				HttpClient client = HttpClientBuilder.create().build();
-				HttpGet get = new HttpGet(url);
-				response = client.execute(get);
-				rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-
-				result = new StringBuffer();
-				line = "";
-				while ((line = rd.readLine()) != null) {
-					result.append(line);
-				}
-
-				System.out.println(result.toString());
-				JSONTokener jtok = new JSONTokener(result.toString());
-
-				try {
-					Thread.sleep(SLEEP_TIME);
-				} catch (Exception e) { e.printStackTrace(); }
-
-			}
-		}
 
 	}
 }

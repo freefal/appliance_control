@@ -1,4 +1,4 @@
-<project name="ChessEngineServer" basedir="." default="main">
+<project name="ApplianceServer" basedir="." default="main">
 
 	<path id="classpath">
  		<fileset dir="lib" includes="**/*.jar"/>
@@ -18,17 +18,17 @@
 	</target>
 
 	<mkdir dir="build/jar" />	
-	<manifestclasspath property="lib.list" jarfile="build/jar/ChessEngineServer.jar">
+	<manifestclasspath property="lib.list" jarfile="build/jar/ApplianceServer.jar">
 		    <classpath refid="classpath"/>
 	</manifestclasspath>
 	
 	<target name="jar" depends="compile">
 		<mkdir dir="build/jar"/>
-		<jar destfile="build/jar/ChessEngineServer.jar" basedir="build/classes">
+		<jar destfile="build/jar/ApplianceServer.jar" basedir="build/classes">
 			<fileset dir="build/classes" includes="**/*.class" />
 			<fileset dir="lib" includes="**/*.jar" />
 			<manifest>
-				<attribute name="Main-Class" value="ChessEngineServer"/>
+				<attribute name="Main-Class" value="ApplianceServer"/>
 				<attribute name="Class-Path" value="${lib.list}"/>
 			</manifest>
 
@@ -36,15 +36,17 @@
 	</target>
 
 	<target name="run" depends="jar">
-		<java fork="true" jar="build/jar/ChessEngineServer.jar"> 
+		<java fork="true" jar="build/jar/ApplianceServer.jar"> 
 		</java>
 	</target>
 
 	<target name="runclient" depends="jar">
-		<java fork="true" classname="ChessEngineClient">
+		<java fork="true" classname="ApplianceClient">
 			<classpath>
-				<pathelement location="build/jar/ChessEngineServer.jar"/>
-			</classpath> 
+				<pathelement location="build/jar/ApplianceServer.jar"/>
+			</classpath>
+			<arg value="ac"/>
+      <arg value="1"/> 
 		</java>
 	</target>
 
