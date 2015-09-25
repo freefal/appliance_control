@@ -66,6 +66,7 @@ public class ApplianceServer {
 	public static void updateSetting(String app, int state) {
 		try {
 			jsonSettings.put(app,state);
+			saveSettings();
 		} catch (Exception e) { e.printStackTrace(); }
 	}
 
