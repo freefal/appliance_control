@@ -1,46 +1,98 @@
 <html>
 <head>
-<style>
+	<style>
 .onoffswitch {
-	    position: relative; width: 60px;
-			    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+	position: relative; width: 60px;
+	-webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
 }
 .onoffswitch-checkbox {
-	    display: none;
+	display: none;
 }
 .onoffswitch-label {
-	    display: block; overflow: hidden; cursor: pointer;
-			    height: 36px; padding: 0; line-height: 36px;
-					    border: 2px solid #CCCCCC; border-radius: 36px;
-							    background-color: #FFFFFF;
-									    transition: background-color 0.3s ease-in;
+	display: block; overflow: hidden; cursor: pointer;
+	height: 36px; padding: 0; line-height: 36px;
+	border: 2px solid #CCCCCC; border-radius: 36px;
+	background-color: #FFFFFF;
+	transition: background-color 0.3s ease-in;
 }
 .onoffswitch-label:before {
-	    content: "";
-			    display: block; width: 36px; margin: 0px;
-					    background: #FFFFFF;
-							    position: absolute; top: 0; bottom: 0;
-									    right: 22px;
-											    border: 2px solid #CCCCCC; border-radius: 36px;
-													    transition: all 0.3s ease-in 0s; 
+	content: "";
+	display: block; width: 36px; margin: 0px;
+	background: #FFFFFF;
+	position: absolute; top: 0; bottom: 0;
+	right: 22px;
+	border: 2px solid #CCCCCC; border-radius: 36px;
+	transition: all 0.3s ease-in 0s; 
 }
 .onoffswitch-checkbox:checked + .onoffswitch-label {
-	    background-color: #49E845;
+	background-color: #49E845;
 }
 .onoffswitch-checkbox:checked + .onoffswitch-label, .onoffswitch-checkbox:checked + .onoffswitch-label:before {
-	   border-color: #49E845;
+	border-color: #49E845;
 }
 .onoffswitch-checkbox:checked + .onoffswitch-label:before {
-	    right: 0px; 
+	right: 0px; 
 }
-</style>
+	</style>
+
+	<script>
+var site = "http://xtac.tk"i
+var port = "8081";
+var getStateURL = "/appliance/v1/getstate";
+var setStateURL = "/appliance/v1/setstate";
+
+var app = "ac"
+$(document).ready(function () {
+	var stateInt = getState();
+	var stateBool = stateInt === 1;
+	console.log(stateInt);
+	console.log(stateBool);
+	$('#onoffswitch')..attr("checked", stateInt);
+	$('#onoffswitch').change(setState($(this).is(':checked')));
+		
+	funciton getStae() {
+  $.ajax({
+      url: site + ":" + port + getStateURL,
+      dataType: 'json',
+      cache: false,
+
+      beforeSend: function () {
+          console.log("Loading");
+      },
+
+      error: function (jqXHR, textStatus, errorThrown) {
+          console.log(jqXHR);
+          console.log(textStatus);
+          console.log(errorThrown);
+      },
+
+      success: function (data) {
+        console.log(data);
+        if (data.status !== "found" || data.bestMove === undefined)
+          return;
+        var evalOutput = "(" + data.eval/100 + ") [" + data.depth + "] " + data.bestMove;
+        watchersDiv.innerHTML = evalOutput;
+        messagesDiv = evalOutput;
+
+        if(data.running === false)
+          clearInterval(evalChecker);
+      },
+
+      complete: function () {
+          console.log('Finished all tasks');
+      }
+  });
+		
+	});
+
+</script>
 </head>
 
 <body>
-<h2> Appliance On/Off Switch: </h2>
-<div class="onoffswitch">
-	<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked >
-	<label class="onoffswitch-label" for="myonoffswitch"></label>
-</div>
+	<h2> Appliance On/Off Switch: </h2>
+	<div class="onoffswitch">
+		<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="onoffswitchi" checked >
+		<label class="onoffswitch-label" for="myonoffswitch"></label>
+	</div>
 </body>
 </html>
