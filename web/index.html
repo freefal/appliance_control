@@ -1,12 +1,12 @@
 <html>
 <head>
-	<style>
+<style>
 .onoffswitch {
 	position: relative;
 	left:50%;
 	top:50%;
-	margin:0px 0 0 -30px;
-	width: 60px;
+	margin:-37px 0 0 -100px;
+	width: 200px;
 	-webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
 }
 .onoffswitch-checkbox {
@@ -14,19 +14,19 @@
 }
 .onoffswitch-label {
 	display: block; overflow: hidden; cursor: pointer;
-	height: 36px; padding: 0; line-height: 36px;
-	border: 2px solid #CCCCCC; border-radius: 36px;
+	height: 75px; padding: 0; line-height: 75px;
+	border: 2px solid #CCCCCC; border-radius: 75px;
 	background-color: #FFFFFF;
 	transition: background-color 0.3s ease-in;
 }
 .onoffswitch-label:before {
 	content: "";
-	display: block; width: 36px; margin: 0px;
+	display: block; width: 75px; margin: 0px;
 	background: #FFFFFF;
 	position: absolute; top: 0; bottom: 0;
-	right: 22px;
-	border: 2px solid #CCCCCC; border-radius: 36px;
-	transition: all 0.3s ease-in 0s;
+	right: 123px;
+	border: 2px solid #CCCCCC; border-radius: 75px;
+	transition: all 0.3s ease-in 0s; 
 }
 .onoffswitch-checkbox:checked + .onoffswitch-label {
 	background-color: #49E845;
@@ -35,12 +35,12 @@
 	border-color: #49E845;
 }
 .onoffswitch-checkbox:checked + .onoffswitch-label:before {
-	right: 0px;
+	right: 0px; 
 }
-	</style>
+</style>
 
-	<script src="jquery-2.1.4.min.js"></script>
-	<script>
+<script src="jquery-2.1.4.min.js"></script>
+<script>
 var site = "http://xtac.tk"
 var port = "8081";
 var getStatePartialURL = "/appliance/v1/getstate";
@@ -49,54 +49,54 @@ var app = "ac"
 
 function getState() {
 	$.ajax({
-		url: site + ":" + port + getStatePartialURL,
-		dataType: 'json',
-		cache: false,
+url: site + ":" + port + getStatePartialURL,
+dataType: 'json',
+cache: false,
 
-		beforeSend: function () {
-			console.log("Loading");
-		},
+beforeSend: function () {
+console.log("Loading");
+},
 
-		error: function (jqXHR, textStatus, errorThrown) {
-			console.log(jqXHR);
-			console.log(textStatus);
-			console.log(errorThrown);
-		},
+error: function (jqXHR, textStatus, errorThrown) {
+console.log(jqXHR);
+console.log(textStatus);
+console.log(errorThrown);
+},
 
-		success: function (data) {
-			console.log(data);
-			if (data[app] === undefined)
-				return;
-			var state = data[app] === 1;
-			console.log(state);
-			$('#myonoffswitch').attr("checked", state);
-		},
+success: function (data) {
+console.log(data);
+if (data[app] === undefined)
+return;
+var state = data[app] === 1;
+console.log(state);
+$('#myonoffswitch').attr("checked", state);
+				 },
 
-		complete: function () {
-			console.log('Finished all tasks');
-		}
-	});
+complete: function () {
+						console.log('Finished all tasks');
+					}
+});
 }
 
 $(document).ready(function () {
-	getState();
-	$('#myonoffswitch').change(function () {
-		var isChecked = this.checked;
-		console.log("Sent state " + isChecked);
-		var setStateURL = site + ":" + port + setStatePartialURL;
-		var data = { app : app, state : (isChecked ? 1 : 0)};
-		$.post(setStateURL, data );
-	});
-});
-	</script>
+		getState();
+		$('#myonoffswitch').change(function () {
+			var isChecked = this.checked;
+			console.log("Sent state " + isChecked);
+			var setStateURL = site + ":" + port + setStatePartialURL;
+			var data = { app : app, state : (isChecked ? 1 : 0)};
+			$.post(setStateURL, data );
+			});
+		});
+</script>
 
 </head>
 
 <body>
-	<!--<h2> On/Off Switch: </h2>-->
-	<div class="onoffswitch">
-		<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" >
-		<label class="onoffswitch-label" for="myonoffswitch"></label>
-	</div>
+<!--<h2> On/Off Switch: </h2>-->
+<div class="onoffswitch">
+	<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" >
+	<label class="onoffswitch-label" for="myonoffswitch"></label>
+</div>
 </body>
 </html>
