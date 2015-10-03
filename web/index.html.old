@@ -2,11 +2,7 @@
 <head>
 	<style>
 .onoffswitch {
-	position: relative;
-	left:50%;
-	top:50%;
-	margin:0px 0 0 -30px;
-	width: 60px;
+	position: relative; width: 60px;
 	-webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
 }
 .onoffswitch-checkbox {
@@ -93,7 +89,7 @@ $(document).ready(function () {
 </head>
 
 <body>
-	<!--<h2> On/Off Switch: </h2>-->
+	<h2> On/Off Switch: </h2>
 	<div class="onoffswitch">
 		<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" >
 		<label class="onoffswitch-label" for="myonoffswitch"></label>

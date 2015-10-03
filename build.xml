@@ -40,13 +40,22 @@
 		</java>
 	</target>
 
-	<target name="runclient" depends="jar">
-		<java fork="true" classname="ApplianceClient">
+	<target name="runtestclient" depends="jar">
+		<java fork="true" classname="ApplianceTestClient">
 			<classpath>
 				<pathelement location="build/jar/ApplianceServer.jar"/>
 			</classpath>
 			<arg value="ac"/>
       <arg value="1"/> 
+		</java>
+	</target>
+
+	<target name="runpiclient" depends="jar">
+		<java fork="true" classname="AppliancePiClient">
+			<classpath>
+				<pathelement location="build/jar/ApplianceServer.jar"/>
+			</classpath>
+			<arg value="ac"/>
 		</java>
 	</target>
 
