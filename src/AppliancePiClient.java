@@ -11,8 +11,10 @@ import org.json.*;
 import com.pi4j.io.gpio.*;
 
 public class AppliancePiClient {
-	public static final String SET_STATE_URL = "http://localhost:8081/appliance/v1/setstate";
-	public static final String GET_STATE_URL = "http://localhost:8081/appliance/v1/getstate";
+	public static final String SITE = "xtac.tk";
+	public static final int PORT = 8081;
+	public static final String SET_STATE_URL = "http://" + SITE + ":" + PORT + "/appliance/v1/setstate";
+	public static final String GET_STATE_URL = "http://" + SITE + ":" + PORT + "/appliance/v1/getstate";
 	public static final int SLEEP_TIME = 10000;
 	public static String app = null;
 	public static final Pin PIN = RaspiPin.GPIO_01;
@@ -36,6 +38,7 @@ public class AppliancePiClient {
 					pin.high();
 				else
 					pin.low();
+				Thread.sleep(SLEEP_TIME);
 			} catch (Exception e) { e.printStackTrace(); }
 		}
 
