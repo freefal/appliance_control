@@ -33,9 +33,6 @@ public class AppliancePiClient {
 		while (true) {
 			try {
 				int intState = getState(app);
-				if (intState == -1) {
-					continue;
-				}
 				if (intState > 0) {
 					pin.high();
 				}
