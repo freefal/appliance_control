@@ -3,6 +3,7 @@ import java.net.*;
 import java.util.*;
 import org.apache.http.*;
 import org.apache.http.client.*;
+import org.apache.http.client.config.*;
 import org.apache.http.client.entity.*;
 import org.apache.http.client.methods.*;
 import org.apache.http.impl.client.*;
@@ -32,12 +33,15 @@ public class AppliancePiClient {
 		while (true) {
 			try {
 				int intState = getState(app);
-				if (intState == -1)
+				if (intState == -1) {
 					continue;
-				if (intState > 0)
+				}
+				if (intState > 0) {
 					pin.high();
-				else
+				}
+				else {
 					pin.low();
+				}
 				Thread.sleep(SLEEP_TIME);
 			} catch (Exception e) { e.printStackTrace(); }
 		}
@@ -45,38 +49,31 @@ public class AppliancePiClient {
 	}
 	public static int getState(String app) {
 		int state = -1;
-		try {
-			HttpClient client = HttpClientBuilder.create().build();
-			HttpGet get = new HttpGet(GET_STATE_URL);
+		HttpGet get = null;
+		HttpResponse response = null;
+		BufferedReader reader = null;
 
-			HttpResponse response = client.execute(get);
-			BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+		try {
+			RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(5*1000).build();
+			HttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).build();
+			get = new HttpGet(GET_STATE_URL);
+
+			response = client.execute(get);
+			reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 
 			StringBuffer result = new StringBuffer();
 			String line = "";
-			while ((line = reader.readLine()) != null) {
-				result.append(line);
-			}
+			line = reader.readLine();
+			result.append(line);
 
-			System.out.println(result.toString());
 			JSONObject json = new JSONObject(result.toString());
 			state = (json.getInt(app));
-		} catch (Exception e) { e.printStackTrace(); }
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			get.releaseConnection();
+		}	
 		return state;
 	}
 }
 
-/*
-	 String app = args[0];
-	 String state = args[1];
-	 HttpClient client = HttpClientBuilder.create().build();
-	 HttpPost post = new HttpPost(SET_STATE_URL);
-
-	 List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-	 urlParameters.add(new BasicNameValuePair("app", app));
-	 urlParameters.add(new BasicNameValuePair("state", state));
-
-	 post.setEntity(new UrlEncodedFormEntity(urlParameters));
-
-	 HttpResponse response = client.execute(post);
-	 */
