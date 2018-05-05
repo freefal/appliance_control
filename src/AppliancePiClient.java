@@ -12,7 +12,7 @@ import org.json.*;
 import com.pi4j.io.gpio.*;
 
 public class AppliancePiClient {
-	public static final String SITE = "xtac.tk";
+	public static final String SITE = "xtac.ml";
 	public static final int PORT = 8081;
 	public static final String SET_STATE_URL = "http://" + SITE + ":" + PORT + "/appliance/v1/setstate";
 	public static final String GET_STATE_URL = "http://" + SITE + ":" + PORT + "/appliance/v1/getstate";
