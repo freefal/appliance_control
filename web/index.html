@@ -1,102 +1,95 @@
 <html>
 <head>
-<style>
-.onoffswitch {
-	position: relative;
-	left:50%;
-	top:50%;
-	margin:-37px 0 0 -100px;
-	width: 200px;
-	-webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
-}
-.onoffswitch-checkbox {
-	display: none;
-}
-.onoffswitch-label {
-	display: block; overflow: hidden; cursor: pointer;
-	height: 75px; padding: 0; line-height: 75px;
-	border: 2px solid #CCCCCC; border-radius: 75px;
-	background-color: #FFFFFF;
-	transition: background-color 0.3s ease-in;
-}
-.onoffswitch-label:before {
-	content: "";
-	display: block; width: 75px; margin: 0px;
-	background: #FFFFFF;
-	position: absolute; top: 0; bottom: 0;
-	right: 123px;
-	border: 2px solid #CCCCCC; border-radius: 75px;
-	transition: all 0.3s ease-in 0s; 
-}
-.onoffswitch-checkbox:checked + .onoffswitch-label {
-	background-color: #49E845;
-}
-.onoffswitch-checkbox:checked + .onoffswitch-label, .onoffswitch-checkbox:checked + .onoffswitch-label:before {
-	border-color: #49E845;
-}
-.onoffswitch-checkbox:checked + .onoffswitch-label:before {
-	right: 0px; 
-}
-</style>
+    <meta charset="utf-8"/>
+    <style>
+        .switchcontainer {
+            display: flex;
+            height: 100%;
+            width: 100%;
+            align-items: center;
+        }
+        .onoffswitch {
+        	align-self: center;
+            position: relative;
+        	left:50%;
+        	margin:-37px 0 0 -100px;
+        	width: 200px;
+        	-webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+        }
+        .onoffswitch-checkbox {
+        	display: none;
+        }
+        .onoffswitch-label {
+        	display: block; overflow: hidden; cursor: pointer;
+        	height: 75px; padding: 0; line-height: 75px;
+        	border: 2px solid #CCCCCC; border-radius: 75px;
+        	background-color: #FFFFFF;
+        	transition: background-color 0.3s ease-in;
+        }
+        .onoffswitch-label:before {
+        	content: "";
+        	display: block; width: 75px; margin: 0px;
+        	background: #FFFFFF;
+        	position: absolute; top: 0; bottom: 0;
+        	right: 123px;
+        	border: 2px solid #CCCCCC; border-radius: 75px;
+        	transition: all 0.3s ease-in 0s; 
+        }
+        .onoffswitch-checkbox:checked + .onoffswitch-label {
+        	background-color: #49E845;
+        }
+        .onoffswitch-checkbox:checked + .onoffswitch-label, .onoffswitch-checkbox:checked + .onoffswitch-label:before {
+        	border-color: #49E845;
+        }
+        .onoffswitch-checkbox:checked + .onoffswitch-label:before {
+        	right: 0px; 
+        }
+    </style>
 
-<script src="jquery-2.1.4.min.js"></script>
-<script>
-var site = "http://xtac.ml"
-var port = "8081";
-var getStatePartialURL = "/appliance/v1/getstate";
-var setStatePartialURL = "/appliance/v1/setstate";
-var app = "ac"
+    <script>
+        let site = "http://xtac.ml"
+        let port = "8081";
+        let getStatePartialURL = "/appliance/v1/getstate";
+        let setStatePartialURL = "/appliance/v1/setstate";
+        let getStateURL = site + ':' + port + getStatePartialURL;
+        let setStateURL = site + ":" + port + setStatePartialURL;
+        let app = "ac"
 
-function getState() {
-	$.ajax({
-url: site + ":" + port + getStatePartialURL,
-dataType: 'json',
-cache: false,
+        function getState() {
+            let request = new XMLHttpRequest();
+            request.open('GET', getStateURL, true);
+            request.onload = function() {
+                let resp = JSON.parse(request.responseText);
+                if (resp[app] === undefined)
+                    return;
+                let state = resp[app] === 1;
+                document.getElementById("myonoffswitch").checked = state;
+            }
+            request.onerror = function() {
+                console.log('error');
+            }
+            request.send();
+        }
+        document.addEventListener('DOMContentLoaded', function(){ 
+            getState();
+            document.getElementById("myonoffswitch").onchange = function () {
+                console.log("Sent state " + this.checked);
+                let data = { app : app, state : (this.checked ? 1 : 0)};
+                let request = new XMLHttpRequest();
+                request.open('POST', setStateURL, true);
+                request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                request.send('app=' + data.app + '&state=' + data.state);
+            }
+        }, false);
 
-beforeSend: function () {
-console.log("Loading");
-},
-
-error: function (jqXHR, textStatus, errorThrown) {
-console.log(jqXHR);
-console.log(textStatus);
-console.log(errorThrown);
-},
-
-success: function (data) {
-console.log(data);
-if (data[app] === undefined)
-return;
-var state = data[app] === 1;
-console.log(state);
-$('#myonoffswitch').attr("checked", state);
-				 },
-
-complete: function () {
-						console.log('Finished all tasks');
-					}
-});
-}
-
-$(document).ready(function () {
-		getState();
-		$('#myonoffswitch').change(function () {
-			var isChecked = this.checked;
-			console.log("Sent state " + isChecked);
-			var setStateURL = site + ":" + port + setStatePartialURL;
-			var data = { app : app, state : (isChecked ? 1 : 0)};
-			$.post(setStateURL, data );
-			});
-		});
-</script>
-
-</head>
-
-<body>
-<!--<h2> On/Off Switch: </h2>-->
-<div class="onoffswitch">
-	<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" >
-	<label class="onoffswitch-label" for="myonoffswitch"></label>
-</div>
-</body>
+    </script>
+    </head>
+    <body>
+        <div class="switchcontainer">
+            <div class="onoffswitch">
+        	    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" >
+            	<label class="onoffswitch-label" for="myonoffswitch"></label>
+            </div>
+        </div>
+    </body>
 </html>

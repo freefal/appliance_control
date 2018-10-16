@@ -5,7 +5,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.ServletHandler;
+import org.eclipse.jetty.servlets.CrossOriginFilter;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.FilterHolder;
 import org.json.*;
 
 public class ApplianceServer {
@@ -16,9 +18,16 @@ public class ApplianceServer {
 	public static void main(String[] args) throws Exception {
 		loadSettings();
 		Server server = new Server(API_PORT);
-		ServletHandler handler = new ServletHandler();
-		handler.addServletWithMapping(GetStateServlet.class, "/appliance/v1/getstate");
-		handler.addServletWithMapping(SetStateServlet.class, "/appliance/v1/setstate");
+
+        FilterHolder filterHolder = new FilterHolder(CrossOriginFilter.class);
+        filterHolder.setInitParameter("allowedOrigins", "*");
+        filterHolder.setInitParameter("allowedMethods", "GET, POST");
+
+		ServletContextHandler handler = new ServletContextHandler();
+		handler.addServlet(GetStateServlet.class, "/appliance/v1/getstate");
+		handler.addServlet(SetStateServlet.class, "/appliance/v1/setstate");
+        handler.addFilter(filterHolder, "/*", null);
+
 		server.setHandler(handler);    
 		server.start();
 		server.join();
@@ -73,11 +82,14 @@ public class ApplianceServer {
 	@SuppressWarnings("serial")
 		public static class SetStateServlet extends HttpServlet {
 			protected void doPost (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-				String app = request.getParameter("app");
+				System.out.println(request.getParameter("state"));
+                Enumeration enAttr = request.getParameterNames();
+                System.out.println("hello1"); 
+                String app = request.getParameter("app");
 				int state = Integer.parseInt(request.getParameter("state"));
 				updateSetting(app, state);
-				response.addHeader("Access-Control-Allow-Origin", "*");
-				response.setContentType("application/json");
+				//response.addHeader("Access-Control-Allow-Origin", "*");
+				//response.setContentType("application/json");
 				response.setStatus(HttpServletResponse.SC_OK);
 				PrintWriter writer = response.getWriter();
 				writer.flush();
@@ -88,8 +100,8 @@ public class ApplianceServer {
 	@SuppressWarnings("serial")
 		public static class GetStateServlet extends HttpServlet {
 			protected void doGet (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-				response.addHeader("Access-Control-Allow-Origin", "*");
-				response.setContentType("application/json");
+				//response.addHeader("Access-Control-Allow-Origin", "*");
+				//response.setContentType("application/json");
 				response.setStatus(HttpServletResponse.SC_OK);
 				PrintWriter writer = response.getWriter();
 				writer.println(jsonSettings.toString());
